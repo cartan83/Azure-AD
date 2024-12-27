@@ -1,0 +1,36 @@
+{
+    "properties": {
+        "roleName": "CloudabilitySubscriptionDataReader",
+        "description": "The users of this role can read subscriptions util data.",
+        "assignableScopes": [
+            "/providers/Microsoft.Management/managementGroups/66f379f3-845e-4dda-bc60-21c06b7b4c01"
+        ],
+        "permissions": [
+            {
+                "actions": [
+                    "Microsoft.Compute/virtualMachines/read",
+                    "Microsoft.Compute/virtualMachines/extensions/read",
+                    "Microsoft.Compute/disks/read",
+                    "Microsoft.Sql/servers/databases/read",
+                    "Microsoft.Sql/servers/read",
+                    "Microsoft.Sql/servers/elasticpools/read",
+                    "Microsoft.Insights/metricDefinitions/read",
+                    "Microsoft.Insights/metrics/read",
+                    "Microsoft.Resources/subscriptions/read",
+                    "Microsoft.Resources/subscriptions/resourceGroups/read",
+                    "Microsoft.Authorization/roleAssignments/read",
+                    "Microsoft.Consumption/usageDetails/read",
+                    "Microsoft.Consumption/pricesheets/read",
+                    "Microsoft.CostManagement/query/read",
+                    "Microsoft.Commerce/UsageAggregates/read",
+                    "Microsoft.Commerce/RateCard/read",
+                    "Microsoft.Insights/Metricnamespaces/Read",
+                    "Microsoft.Network/networkInterfaces/read"
+                ],
+                "notActions": [],
+                "dataActions": [],
+                "notDataActions": []
+            }
+        ]
+    }
+}
