@@ -1,0 +1,59 @@
+Import-Module Microsoft.Graph
+
+# Ensure you are authenticated to Microsoft Graph
+Connect-MgGraph -Scopes "Group.ReadWrite.All","Directory.ReadWrite.All","RoleManagement.ReadWrite.Directory"
+
+# Path to the CSV file
+$csvPath = "C:\Temp\Groups.csv"
+
+# Import the CSV file
+$groupsData = Import-Csv -Path $csvPath
+
+foreach ($group in $groupsData) {
+    # Parse data from CSV
+    $groupName = $group.GroupName
+    $role = $group.Role
+    $users = $group.Users -split ";"
+    $owners = $group.Owners -split ";"
+    $description = $group.Description
+
+    # Create the group
+    Write-Host "Creating group: $groupName"
+    $newGroup = New-MgGroup -DisplayName $groupName -MailEnabled:$false -MailNickname $groupName.Replace(" ", "") -SecurityEnabled:$true -Description $description -GroupTypes "AssignableToRole"
+
+    # Get the group ID
+    $groupId = $newGroup.Id
+
+    # Assign the role to the group
+    Write-Host "Assigning role: $role to group: $groupName"
+    $roleDefinition = Get-MgRoleDefinition -Filter "displayName eq '$role'"
+    if (-not $roleDefinition) {
+        Write-Warning "Role $role not found. Skipping role assignment."
+        continue
+    }
+    $roleAssignment = New-MgRoleAssignment -PrincipalId $groupId -RoleDefinitionId $roleDefinition.Id -DirectoryScopeId "Directory"
+
+    # Add users to the group
+    foreach ($userEmail in $users) {
+        Write-Host "Adding user: $userEmail to group: $groupName"
+        $user = Get-MgUser -Filter "mail eq '$userEmail'"
+        if ($user) {
+            Add-MgGroupMember -GroupId $groupId -DirectoryObjectId $user.Id
+        } else {
+            Write-Warning "User $userEmail not found. Skipping."
+        }
+    }
+
+    # Assign owners to the group
+    foreach ($ownerEmail in $owners) {
+        Write-Host "Assigning owner: $ownerEmail to group: $groupName"
+        $owner = Get-MgUser -Filter "mail eq '$ownerEmail'"
+        if ($owner) {
+            Add-MgGroupOwner -GroupId $groupId -DirectoryObjectId $owner.Id
+        } else {
+            Write-Warning "Owner $ownerEmail not found. Skipping."
+        }
+    }
+}
+
+Write-Host "Script completed."
