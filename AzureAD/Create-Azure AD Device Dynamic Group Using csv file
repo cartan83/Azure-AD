@@ -1,0 +1,73 @@
+# Prerequisites: Install and import Microsoft.Graph.Beta module
+# Install-Module Microsoft.Graph.Beta -Force
+# Import-Module Microsoft.Graph.Beta
+# Authenticate to Microsoft Graph
+Connect-MgGraph -Scopes "Group.ReadWrite.All" -Environment USGovDoD
+
+# Variables
+
+$CsvPath = "C:\Temp\BasePrefix.csv"  # Path to the CSV file
+
+# List of group owner email addresses
+$GroupOwners = @(
+    "nestor.cartaya.cld@usaf.onmicrosoft.com",
+    "jacob.hawryluk.cld@USAF.onmicrosoft.com"
+)
+$owners = @()
+# Running Get-MgUser outside of the foreach(item in groupCsv) to avoid looking up the same user information for each item in the CSV file.
+foreach($o in $GroupOwners){
+    $owners += (Get-MgUser -Search "userPrincipalName:$o" -ConsistencyLevel eventual).Id
+} 
+
+# Import CSV
+$CsvData = Import-Csv -Path $CsvPath
+
+# Initialize success and failure lists
+$CreatedGroups = @()
+$FailedGroups = @()
+
+# Iterate through each row in the CSV
+foreach ($Row in $CsvData) {
+    $Prefix = $Row.Prefix          # Column A: Device Name Prefix
+    $BaseName = $Row.BaseName      # Column B: Base Name
+    $Description = $Row.Description # Column C: Description
+
+    # Generate group name
+    $GroupName = "Prod - EITaaS - $BaseName-$Prefix - Device Group"
+
+    # Define dynamic membership rule
+    $MembershipRule = "device.displayName -startsWith `"$Prefix`""
+
+    try {
+        # Create group
+        $Group = New-MgGroup -DisplayName $GroupName -Description $Description -MailEnabled:$false -SecurityEnabled:$true `
+            -GroupTypes "DynamicMembership" -MembershipRule $MembershipRule -MembershipRuleProcessingState "On"
+        Write-Output "Created Group: $($Group.DisplayName)"
+
+        # Add to success list
+        $CreatedGroups += $Group
+
+        # Assign owners to the group
+        foreach($o in $owners){
+            $objRef = @{
+                "@odata.id" = "https://dod-graph.microsoft.us/v1.0/users/{$o}"
+            }
+            New-MgGroupOwnerByRef -GroupId $Group.Id -BodyParameter $objRef
+        }
+    } catch {
+        Write-Warning "Failed to create group: $GroupName. Error: $_"
+        $FailedGroups += $GroupName
+    }
+}
+
+# Output results
+Write-Output "Script execution completed."
+Write-Output "Total Groups Created: $($CreatedGroups.Count)"
+Write-Output "Total Groups Failed: $($FailedGroups.Count)"
+
+# Optional: Output the lists of groups
+Write-Output "Created Groups: $($CreatedGroups | ForEach-Object { $_.DisplayName })"
+Write-Output "Failed Groups: $FailedGroups"
+
+# Disconnect from Microsoft Graph
+Disconnect-MgGraph
