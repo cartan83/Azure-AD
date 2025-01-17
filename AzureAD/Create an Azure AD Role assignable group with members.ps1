@@ -1,6 +1,11 @@
-
-<#h
-ttps://learn.microsoft.com/en-us/powershell/microsoftgraph/installation?view=graph-powershell-1.0
+<#
+https://learn.microsoft.com/en-us/powershell/microsoftgraph/installation?view=graph-powershell-1.0
+This script uses a csv file that contains the details
+   $groupName = $group.GroupName
+    $role = $group.Role
+    $users = $group.Users -split ";"
+    $owners = $group.Owners -split ";"
+    $description = $group.Description
 #>
 Install-Module Microsoft.Graph
 Update-Module Microsoft.Graph
