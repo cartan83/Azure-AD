@@ -1,0 +1,7 @@
+Email,UPN,FirstName,LastName,DisplayName,JobTitle,CompanyName,Department,Manager,UsageLocation,Group,Roles
+cortega@redhat.com,cortega@redhat.com,Cesar,Ortega,CesarOrtega,Cloud Admins,Red Hat,ITPC,,US,RH-ITPC-Azure Admins,Global Administrator
+jrussell@redhat.com,jrussell@redhat.com,James,Russell,JamesRussell,Cloud Admins,Red Hat,ITPC,,US,RH-ITPC-Azure Admins,Global Administrator
+mzink@redhat.com,mzink@redhat.com,Milan,Zink,MilanZink,Cloud Admins,Red Hat,ITPC,,US,RH-ITPC-Azure Admins,Global Administrator
+ncartaya@redhat.com,ncartaya@redhat.com,Nestor,Cartaya,NestorCartaya,Cloud Admins,Red Hat,ITPC,,US,RH-ITPC-Azure Admins,Global Administrator
+rmahroua@redhat.com,rmahroua@redhat.com,Razique,Mahroua,RaziqueMahroua,Cloud Admins,Red Hat,ITPC,,US,RH-ITPC-Azure Admins,Global Administrator
+rthrashe@redhat.com,rthrashe@redhat.com,Rory,Thrasher,RoryThrasher,Cloud Admins,Red Hat,ITPC,,US,RH-ITPC-Azure Admins,Global Administrator
