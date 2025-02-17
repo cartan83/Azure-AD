@@ -137,3 +137,8 @@ foreach ($guest in $guests) {
 Write-Host "Processing completed!" -ForegroundColor Cyan
 Write-Output "Processing completed!"
 Stop-Transcript
+
+# Display the transcript log to the user
+Write-Host "`n--- Transcript Log ---" -ForegroundColor Cyan
+Get-Content -Path $logFile | ForEach-Object { Write-Host $_ }
+Write-Host "`n--- End of Transcript ---" -ForegroundColor Cyan
