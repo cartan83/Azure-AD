@@ -1,0 +1,2 @@
+Connect-AzureAD
+Get-AzureADServicePrincipal -All $true | Where-Object {$_.tags -eq "WindowsAzureActiveDirectoryCustomSingleSignOnApplication"} | Out-File .\PSP-EnterpriseSSOApplications.csv
